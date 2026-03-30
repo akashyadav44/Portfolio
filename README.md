@@ -36,18 +36,9 @@ Fonts        →  Syne (Display) + Epilogue (Body) — Google Fonts
 Animations   →  Pure CSS + Intersection Observer API
 Hosting      →  GitHub Pages (Free)
 
-🚀 How to Run Locally
-bash# Clone the repository
-git clone https://github.com/yourusername/akash-portfolio.git
+ 
 
-# Navigate to folder
-cd akash-portfolio
-
-# Just open in browser
-open index.html
-
-No npm, no build step — just open index.html in any browser!
-
+ 
 
 📁 File Structure
 akash-portfolio/
