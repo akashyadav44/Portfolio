@@ -43,8 +43,8 @@ Hosting      →  GitHub Pages (Free)
 📁 File Structure
 akash-portfolio/
 │
-├── index.html        ← Complete portfolio (single file)
-└── README.md         ← You are here
+├── index.html         
+└── README.md         
 
 📬 Contact
 PlatformLink📧 Emailakashyadav98a@gmail.com📞 Phone+91 8789436301
