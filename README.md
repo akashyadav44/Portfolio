@@ -47,4 +47,4 @@ akash-portfolio/
 └── README.md         ← You are here
 
 📬 Contact
-PlatformLink📧 Emailakashyadav98a@gmail.com📞 Phone+91 8789436301💼 LinkedInConnect on LinkedIn🐙 GitHubgithub.com/yourusername
+PlatformLink📧 Emailakashyadav98a@gmail.com📞 Phone+91 8789436301
