@@ -1,17 +1,5 @@
 🌐 Live Demo https://portfolio3354.netlify.app/
 
-
-📸 Preview
-┌─────────────────────────────────────────┐
-│  AK.dev                        [Hire Me]│
-│                                         │
-│  Akash Kumar                            │
-│  Software Engineer                      │
-│                                         │
-│  ⚛️ React  🟢 Node.js  🐍 Python       │
-│  🧠 ML     🗄️ MongoDB  📱 Flutter      │
-└─────────────────────────────────────────┘
-
 ✨ Features
 
 🖱️ Custom Cursor — Animated lime-green dot with trailing ring effect
