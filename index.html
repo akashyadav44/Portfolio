@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -43,13 +43,20 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .nav-cta:hover{background:var(--lime2)!important;transform:translateY(-1px)!important;}
 .nav-cta::after{display:none!important;}
 
+/* ── GLOBAL STARFIELD CANVAS ── */
+#bgCanvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+@media(prefers-reduced-motion:reduce){#bgCanvas{display:none!important;}}
+
 /* HERO */
 .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:140px 60px 80px;position:relative;overflow:hidden;}
 .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(200,241,53,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(200,241,53,0.04) 1px, transparent 1px);background-size:60px 60px;animation:gridMove 20s linear infinite;}
 @keyframes gridMove{from{transform:translateY(0);}to{transform:translateY(60px);}}
 .orb{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;}
-.orb1{width:500px;height:500px;background:rgba(200,241,53,.08);top:-100px;right:-100px;}
-.orb2{width:400px;height:400px;background:rgba(53,241,241,.06);bottom:-50px;left:-80px;}
+.orb1{width:500px;height:500px;background:rgba(200,241,53,.08);top:-100px;right:-100px;animation:floatOrb1 16s ease-in-out infinite alternate;}
+.orb2{width:400px;height:400px;background:rgba(53,241,241,.06);bottom:-50px;left:-80px;animation:floatOrb2 20s ease-in-out infinite alternate;}
+@keyframes floatOrb1{0%{transform:translate(0,0) scale(1);}100%{transform:translate(-60px,60px) scale(1.12);}}
+@keyframes floatOrb2{0%{transform:translate(0,0) scale(1);}100%{transform:translate(60px,-40px) scale(1.06);}}
+@media(prefers-reduced-motion:reduce){.orb1,.orb2,.hero-grid{animation:none!important;}}
 .hero-eyebrow{font-size:.78rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--lime);display:flex;align-items:center;gap:12px;margin-bottom:24px;animation:fadeUp .7s .2s ease both;}
 .eyebrow-line{width:40px;height:1px;background:var(--lime);}
 .hero h1{font-family:var(--font-display);font-size:clamp(3.2rem,8vw,7rem);font-weight:800;line-height:.95;letter-spacing:-.02em;margin-bottom:32px;animation:fadeUp .7s .35s ease both;}
@@ -208,9 +215,70 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:28px 60p
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--lime);border-radius:2px;}
 
+/* ── MUSIC PLAYER ── */
+#musicWidget{position:fixed;bottom:28px;right:28px;z-index:95;display:flex;align-items:center;gap:13px;background:rgba(8,11,22,0.95);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border:1.5px solid rgba(200,241,53,0.22);border-radius:22px;padding:14px 20px 14px 14px;cursor:pointer;user-select:none;transition:border-color .3s,box-shadow .3s,transform .22s;box-shadow:0 4px 32px rgba(0,0,0,.55);min-width:220px;}
+#musicWidget:hover{border-color:rgba(200,241,53,.5);box-shadow:0 8px 40px rgba(200,241,53,.13);transform:translateY(-3px);}
+#musicWidget.playing{border-color:rgba(200,241,53,.7);box-shadow:0 0 0 1.5px rgba(200,241,53,.12),0 8px 44px rgba(200,241,53,.24);}
+/* ── music note logo ── */
+.mw-logo{width:48px;height:48px;flex-shrink:0;position:relative;}
+.mw-logo svg{width:48px;height:48px;display:block;}
+@keyframes logoPulse{0%,100%{filter:drop-shadow(0 0 3px rgba(200,241,53,.4));}50%{filter:drop-shadow(0 0 14px rgba(200,241,53,.95));}}
+@keyframes logoSpin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+#musicWidget.playing .mw-logo svg{animation:logoPulse 1.5s ease-in-out infinite;}
+/* ── body ── */
+.mw-body{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0;}
+.mw-dbl-label{font-size:.58rem;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--lime);line-height:1;padding:0;display:flex;align-items:center;gap:5px;}
+.mw-dbl-label::before,.mw-dbl-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(200,241,53,.4));display:block;}
+.mw-dbl-label::after{background:linear-gradient(90deg,rgba(200,241,53,.4),transparent);}
+.mw-track{font-family:var(--font-display);font-size:.9rem;font-weight:700;color:var(--white);white-space:nowrap;letter-spacing:.01em;line-height:1.4;}
+.mw-sub{font-size:.6rem;color:var(--muted2);letter-spacing:.04em;transition:color .25s;line-height:1;}
+#musicWidget.playing .mw-sub{color:rgba(200,241,53,.6);}
+.mw-track.flash{animation:trackFlash .22s ease both;}
+/* ── EQ bars ── */
+.mw-eq{display:flex;align-items:flex-end;gap:2px;height:24px;width:22px;flex-shrink:0;opacity:0;transition:opacity .35s;}
+#musicWidget.playing .mw-eq{opacity:1;}
+.mw-eq span{flex:1;background:var(--lime);border-radius:1px 1px 0 0;animation:eqBar .65s ease-in-out infinite;}
+.mw-eq span:nth-child(1){animation-delay:0s;}
+.mw-eq span:nth-child(2){animation-delay:.14s;}
+.mw-eq span:nth-child(3){animation-delay:.28s;}
+.mw-eq span:nth-child(4){animation-delay:.07s;}
+@keyframes eqBar{0%,100%{height:4px;opacity:.45;}50%{height:22px;opacity:1;}}
+@keyframes trackFlash{0%{opacity:0;transform:translateY(5px);}100%{opacity:1;transform:translateY(0);}}
+/* ── badge ── */
+#musicBadge{position:fixed;bottom:96px;right:28px;z-index:94;background:rgba(8,11,22,.96);backdrop-filter:blur(18px);border:1px solid rgba(200,241,53,.25);border-radius:14px;padding:10px 18px;font-size:.73rem;color:var(--muted);letter-spacing:.04em;opacity:0;pointer-events:none;transition:opacity .5s,transform .5s;transform:translateY(10px);white-space:nowrap;}
+#musicBadge.visible{opacity:1;transform:translateY(0);}
+@media(max-width:960px){
+  #musicWidget{bottom:16px;right:12px;padding:11px 14px 11px 12px;gap:10px;border-radius:18px;min-width:190px;}
+  .mw-logo{width:40px;height:40px;} .mw-logo svg{width:40px;height:40px;}
+  .mw-track{font-size:.82rem;}
+  .mw-dbl-label{font-size:.52rem;letter-spacing:.13em;}
+  #musicBadge{bottom:78px;right:12px;padding:8px 14px;font-size:.67rem;}
+}
+
+/* ── HAMBURGER TOGGLE ── */
+.nav-toggle{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:42px;height:42px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;cursor:pointer;z-index:200;transition:background .2s,border-color .2s;padding:0;}
+.nav-toggle span{display:block;width:20px;height:2px;background:var(--white);border-radius:2px;transition:transform .3s ease,opacity .3s ease,background .2s;}
+.nav-toggle.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.nav-toggle.open span:nth-child(2){opacity:0;transform:scaleX(0);}
+.nav-toggle.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.nav-toggle:hover{background:var(--surface2);border-color:var(--lime);}
+.nav-toggle:hover span{background:var(--lime);}
+
+/* ── MOBILE MENU OVERLAY ── */
+.mobile-menu{position:fixed;inset:0;z-index:150;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:0;background:rgba(8,11,18,.97);backdrop-filter:blur(24px);opacity:0;pointer-events:none;transition:opacity .3s ease;}
+.mobile-menu.open{opacity:1;pointer-events:all;}
+.mobile-menu ul{list-style:none;display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;padding:0 32px;}
+.mobile-menu ul li{width:100%;text-align:center;}
+.mobile-menu ul li a{display:block;padding:16px 24px;font-family:var(--font-display);font-size:1.3rem;font-weight:700;color:var(--muted);text-decoration:none;letter-spacing:.06em;text-transform:uppercase;border-radius:12px;border:1px solid transparent;transition:all .2s;}
+.mobile-menu ul li a:hover,.mobile-menu ul li a.active{color:var(--lime);border-color:rgba(200,241,53,.2);background:rgba(200,241,53,.06);}
+.mobile-menu-cta{margin-top:24px;background:var(--lime);color:var(--bg)!important;padding:16px 48px;border-radius:10px;font-family:var(--font-display);font-weight:800;font-size:1rem;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;transition:all .2s;display:inline-block;}
+.mobile-menu-cta:hover{background:var(--lime2)!important;transform:translateY(-2px);}
+.mobile-menu-close-hint{position:absolute;bottom:40px;color:var(--muted2);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;}
+
 @media(max-width:960px){
   nav{padding:16px 20px;}
   .nav-links{display:none;}
+  .nav-toggle{display:flex;}
   .hero,.about,.projects,.experience,.resume-section,.contact,section{padding:70px 22px;}
   .about-grid{grid-template-columns:1fr;gap:36px;}
   .about-photo-wrap{display:flex;justify-content:center;}
@@ -240,7 +308,26 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:28px 60p
     <li><a href="#resume">Resume</a></li>
     <li><a href="#contact" class="nav-cta">Hire Me</a></li>
   </ul>
+  <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- MOBILE MENU OVERLAY -->
+<div class="mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Navigation">
+  <ul>
+    <li><a href="#about" class="mob-link">About</a></li>
+    <li><a href="#skills" class="mob-link">Skills</a></li>
+    <li><a href="#projects" class="mob-link">Projects</a></li>
+    <li><a href="#experience" class="mob-link">Experience</a></li>
+    <li><a href="#resume" class="mob-link">Resume</a></li>
+  </ul>
+  <a href="#contact" class="mobile-menu-cta mob-link">Hire Me</a>
+  <span class="mobile-menu-close-hint">Tap anywhere to close</span>
+</div>
+
+<!-- GLOBAL STARFIELD BACKGROUND -->
+<canvas id="bgCanvas" aria-hidden="true"></canvas>
 
 <!-- HERO -->
 <section class="hero">
@@ -588,6 +675,45 @@ document.querySelectorAll('.skill-card, .project-card, .timeline-item, .contact-
   }, { threshold: 0.1 }).observe(el);
 });
 
+// ── HAMBURGER MOBILE MENU ──
+(function() {
+  var toggle = document.getElementById('navToggle');
+  var menu   = document.getElementById('mobileMenu');
+  var links  = document.querySelectorAll('.mob-link');
+  var open   = false;
+
+  function openMenu() {
+    open = true;
+    toggle.classList.add('open');
+    menu.classList.add('open');
+    toggle.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMenu() {
+    open = false;
+    toggle.classList.remove('open');
+    menu.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+  toggle.addEventListener('click', function(e) {
+    e.stopPropagation();
+    open ? closeMenu() : openMenu();
+  });
+  // close when a link is tapped
+  links.forEach(function(l) {
+    l.addEventListener('click', closeMenu);
+  });
+  // close when backdrop tapped
+  menu.addEventListener('click', function(e) {
+    if (e.target === menu || e.target.classList.contains('mobile-menu-close-hint')) closeMenu();
+  });
+  // close on ESC
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && open) closeMenu();
+  });
+})();
+
 // ── ACTIVE NAV ──
 var sections = document.querySelectorAll('section[id]');
 window.addEventListener('scroll', function() {
@@ -595,10 +721,535 @@ window.addEventListener('scroll', function() {
   sections.forEach(function(s) {
     if (window.scrollY >= s.offsetTop - 120) current = s.id;
   });
+  var href = '#' + current;
   document.querySelectorAll('.nav-links a').forEach(function(a) {
-    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    a.classList.toggle('active', a.getAttribute('href') === href);
+  });
+  document.querySelectorAll('.mob-link').forEach(function(a) {
+    a.classList.toggle('active', a.getAttribute('href') === href);
   });
 });
+
+// ── FULL-PAGE STARFIELD BACKGROUND ──
+(function() {
+  var canvas = document.getElementById('bgCanvas');
+  if (!canvas) return;
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion) return;
+
+  var ctx = canvas.getContext('2d');
+  var DPR = Math.min(window.devicePixelRatio || 1, 2);
+  var W, H, stars, rafId, resizeTimer;
+  var mouse = { x: -9999, y: -9999 };
+  var isMobile = false;
+
+  // Colour palette matching the portfolio's lime/cyan theme + white
+  var PALETTES = [
+    [255, 255, 255],   // white — most common
+    [255, 255, 255],
+    [255, 255, 255],
+    [53,  241, 241],   // cyan
+    [200, 241, 53],    // lime
+  ];
+
+  function resize() {
+    W = window.innerWidth;
+    H = window.innerHeight;
+    isMobile = W < 768;
+    canvas.width  = Math.max(1, W * DPR);
+    canvas.height = Math.max(1, H * DPR);
+    canvas.style.width  = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    initStars();
+  }
+
+  function initStars() {
+    var count = isMobile ? 55 : 110;
+    stars = [];
+    for (var i = 0; i < count; i++) {
+      var col = PALETTES[Math.floor(Math.random() * PALETTES.length)];
+      var big = Math.random() < 0.08;           // occasional bigger bright dot
+      stars.push({
+        x:    Math.random() * W,
+        y:    Math.random() * H,
+        vx:   (Math.random() - 0.5) * 0.1,
+        vy:   (Math.random() - 0.5) * 0.1,
+        r:    big ? (Math.random() * 1.6 + 1.2) : (Math.random() * 0.9 + 0.4),
+        alpha: Math.random() * 0.5 + 0.15,
+        // twinkle
+        tw:   Math.random() * Math.PI * 2,   // phase
+        tws:  Math.random() * 0.018 + 0.008, // speed
+        twa:  Math.random() * 0.25 + 0.05,   // amplitude
+        c:    col,
+        big:  big
+      });
+    }
+  }
+
+  function step() {
+    ctx.clearRect(0, 0, W, H);
+
+    for (var i = 0; i < stars.length; i++) {
+      var s = stars[i];
+
+      // gentle mouse repulsion on desktop only
+      if (!isMobile) {
+        var dx = s.x - mouse.x, dy = s.y - mouse.y;
+        var d  = Math.sqrt(dx * dx + dy * dy);
+        var rd = 140;
+        if (d < rd && d > 0.1) {
+          var f = (1 - d / rd) * 0.03;
+          s.vx += (dx / d) * f;
+          s.vy += (dy / d) * f;
+        }
+      }
+
+      // speed cap
+      var sp = Math.sqrt(s.vx * s.vx + s.vy * s.vy);
+      var maxSp = 0.4;
+      if (sp > maxSp) { s.vx = s.vx / sp * maxSp; s.vy = s.vy / sp * maxSp; }
+
+      // drift + wrap (wrap gives infinite-field feel)
+      s.x += s.vx * 70;
+      s.y += s.vy * 70;
+      if (s.x < -4)    s.x = W + 4;
+      if (s.x > W + 4) s.x = -4;
+      if (s.y < -4)    s.y = H + 4;
+      if (s.y > H + 4) s.y = -4;
+
+      // twinkle
+      s.tw += s.tws;
+      var twAlpha = s.alpha + Math.sin(s.tw) * s.twa;
+      twAlpha = Math.max(0.04, Math.min(1, twAlpha));
+
+      // draw glow then core dot
+      var glowR = s.big ? s.r * 5 : s.r * 3.5;
+      var grad = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, glowR);
+      grad.addColorStop(0,   'rgba(' + s.c[0] + ',' + s.c[1] + ',' + s.c[2] + ',' + (twAlpha * 0.55).toFixed(3) + ')');
+      grad.addColorStop(0.4, 'rgba(' + s.c[0] + ',' + s.c[1] + ',' + s.c[2] + ',' + (twAlpha * 0.12).toFixed(3) + ')');
+      grad.addColorStop(1,   'rgba(' + s.c[0] + ',' + s.c[1] + ',' + s.c[2] + ',0)');
+      ctx.beginPath();
+      ctx.fillStyle = grad;
+      ctx.arc(s.x, s.y, glowR, 0, Math.PI * 2);
+      ctx.fill();
+
+      // solid core
+      ctx.beginPath();
+      ctx.fillStyle = 'rgba(' + s.c[0] + ',' + s.c[1] + ',' + s.c[2] + ',' + Math.min(1, twAlpha * 1.4).toFixed(3) + ')';
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    rafId = requestAnimationFrame(step);
+  }
+
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() { isMobile = window.innerWidth < 768; resize(); }, 150);
+  });
+
+  // desktop: track mouse globally (canvas is fixed so clientX/Y work directly)
+  document.addEventListener('mousemove', function(e) {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+
+  document.addEventListener('visibilitychange', function() {
+    if (document.hidden) cancelAnimationFrame(rafId);
+    else rafId = requestAnimationFrame(step);
+  });
+
+  resize();
+  rafId = requestAnimationFrame(step);
+})();
 </script>
+<!-- ── MUSIC PLAYER WIDGET ── -->
+<div id="musicBadge">🎵 Music is here — double click the player to start!</div>
+<div id="musicWidget" role="button" tabindex="0" aria-label="Music player — double click to play">
+
+  <!-- Animated music note logo -->
+  <div class="mw-logo">
+    <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="26" cy="26" r="25" fill="rgba(200,241,53,0.08)" stroke="rgba(200,241,53,0.35)" stroke-width="1.4"/>
+      <!-- Eighth note pair -->
+      <rect x="19" y="15" width="2.5" height="14" rx="1.25" fill="rgba(200,241,53,0.9)"/>
+      <rect x="30.5" y="13" width="2.5" height="14" rx="1.25" fill="rgba(200,241,53,0.9)"/>
+      <!-- Beam connecting them -->
+      <rect x="19" y="15" width="14" height="2.5" rx="1.25" fill="rgba(200,241,53,0.9)"/>
+      <!-- Note heads -->
+      <ellipse cx="21.3" cy="29" rx="3.8" ry="2.8" fill="rgba(200,241,53,0.9)" transform="rotate(-15 21.3 29)"/>
+      <ellipse cx="32.8" cy="27" rx="3.8" ry="2.8" fill="rgba(200,241,53,0.9)" transform="rotate(-15 32.8 27)"/>
+    </svg>
+  </div>
+
+  <!-- Text body -->
+  <div class="mw-body">
+    <div class="mw-dbl-label">Double Click to Play</div>
+    <div class="mw-track" id="mwTrack">🎸 English Pop</div>
+    <div class="mw-sub" id="mwHint">click → next song</div>
+  </div>
+
+  <!-- EQ bars (visible while playing) -->
+  <div class="mw-eq"><span></span><span></span><span></span><span></span></div>
+</div>
+
+<script>
+// ── MUSIC PLAYER — English Pop | Hindi Bollywood | Ambient ──
+(function () {
+  var ACtx = window.AudioContext || window.webkitAudioContext;
+  var widget  = document.getElementById('musicWidget');
+  var trackEl = document.getElementById('mwTrack');
+  var hintEl  = document.getElementById('mwSub');
+  var badge   = document.getElementById('musicBadge');
+
+  if (!ACtx) { widget.style.display='none'; badge.style.display='none'; return; }
+
+  var ac = null, master = null, noiseBuffer = null;
+  var allNodes = [];
+  var seqTimer = null;
+  var playing  = false;
+  var curIdx   = 0;
+  var busy     = false;
+
+  var TRACKS = [
+    { name: '🎵 English Song',   fn: startEnglish  },
+    { name: '🎸 Hindi Song',     fn: startHindi    },
+    { name: '🌌 Ambient Chill',  fn: startAmbient  }
+  ];
+
+  // ── Audio graph (lazy) ──
+  function ensureGraph() {
+    if (ac) return;
+    ac = new ACtx();
+    master = ac.createGain();
+    master.gain.value = 0.80;
+    var comp = ac.createDynamicsCompressor();
+    comp.threshold.value = -14;
+    comp.knee.value      = 8;
+    comp.ratio.value     = 5;
+    comp.attack.value    = 0.003;
+    comp.release.value   = 0.25;
+    master.connect(comp);
+    comp.connect(ac.destination);
+    // Pre-bake 2 s noise buffer for drums
+    var ns = Math.floor(ac.sampleRate * 2);
+    noiseBuffer = ac.createBuffer(1, ns, ac.sampleRate);
+    var d = noiseBuffer.getChannelData(0);
+    for (var i = 0; i < ns; i++) d[i] = Math.random() * 2 - 1;
+  }
+
+  function readyThenPlay(fn) {
+    ensureGraph();
+    var go = function () {
+      stopAll();
+      playing = true;
+      busy    = false;
+      fn();
+      updateUI();
+    };
+    if (ac.state !== 'running') {
+      ac.resume().then(go).catch(function () { busy = false; });
+    } else { go(); }
+  }
+
+  function reg(o, g) { allNodes.push({ o: o, g: g }); }
+
+  function stopAll() {
+    clearTimeout(seqTimer);
+    seqTimer = null;
+    if (!ac) return;
+    var t = ac.currentTime;
+    allNodes.forEach(function (n) {
+      try {
+        n.g.gain.cancelScheduledValues(t);
+        n.g.gain.setTargetAtTime(0, t, 0.05);
+        n.o.stop(t + 0.18);
+      } catch (_) {}
+    });
+    allNodes = [];
+  }
+
+  // ── Percussion helpers ──
+  function kick(t, v) {
+    v = v || 0.7;
+    var o = ac.createOscillator(), g = ac.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(190, t);
+    o.frequency.exponentialRampToValueAtTime(50, t + 0.09);
+    g.gain.setValueAtTime(v, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.24);
+    o.connect(g); g.connect(master);
+    o.start(t); o.stop(t + 0.28); reg(o, g);
+  }
+
+  function snare(t, v) {
+    v = v || 0.42;
+    var src = ac.createBufferSource(), g = ac.createGain();
+    var hpf = ac.createBiquadFilter();
+    hpf.type = 'highpass'; hpf.frequency.value = 1800;
+    src.buffer = noiseBuffer;
+    g.gain.setValueAtTime(v, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.13);
+    src.connect(hpf); hpf.connect(g); g.connect(master);
+    src.start(t); src.stop(t + 0.15); reg(src, g);
+    // Body tone
+    var o2 = ac.createOscillator(), g2 = ac.createGain();
+    o2.type = 'triangle'; o2.frequency.value = 215;
+    g2.gain.setValueAtTime(v * 0.35, t);
+    g2.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
+    o2.connect(g2); g2.connect(master);
+    o2.start(t); o2.stop(t + 0.09); reg(o2, g2);
+  }
+
+  function hihat(t, v, open) {
+    var src = ac.createBufferSource(), g = ac.createGain();
+    var hpf = ac.createBiquadFilter();
+    hpf.type = 'highpass'; hpf.frequency.value = 7500;
+    src.buffer = noiseBuffer;
+    var dur = open ? 0.16 : 0.065;
+    g.gain.setValueAtTime(v || 0.22, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    src.connect(hpf); hpf.connect(g); g.connect(master);
+    src.start(t); src.stop(t + dur + 0.01); reg(src, g);
+  }
+
+  // Melodic note (oscillator)
+  function tone(freq, type, t, dur, vol, det) {
+    var o = ac.createOscillator(), g = ac.createGain();
+    o.type = type || 'sine';
+    o.frequency.value = freq;
+    if (det) o.detune.value = det;
+    var atk = Math.min(0.04, dur * 0.1);
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(vol, t + atk);
+    g.gain.setTargetAtTime(0, t + dur * 0.65, dur * 0.18);
+    o.connect(g); g.connect(master);
+    o.start(t); o.stop(t + dur + 0.1); reg(o, g);
+  }
+
+  // ── Tabla drums ──
+  function tDha(t, v) {
+    v = v || 0.55;
+    var o = ac.createOscillator(), g = ac.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(160, t);
+    o.frequency.exponentialRampToValueAtTime(68, t + 0.07);
+    g.gain.setValueAtTime(v, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+    o.connect(g); g.connect(master);
+    o.start(t); o.stop(t + 0.26); reg(o, g);
+    // Slap click
+    var s = ac.createBufferSource(), sg = ac.createGain();
+    var lp = ac.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=600;
+    s.buffer = noiseBuffer;
+    sg.gain.setValueAtTime(v*0.28, t); sg.gain.exponentialRampToValueAtTime(0.001, t+0.038);
+    s.connect(lp); lp.connect(sg); sg.connect(master);
+    s.start(t); s.stop(t+0.045); reg(s, sg);
+  }
+
+  function tTin(t, v) {
+    v = v || 0.32;
+    var o = ac.createOscillator(), g = ac.createGain();
+    o.type = 'triangle';
+    o.frequency.setValueAtTime(540, t);
+    o.frequency.exponentialRampToValueAtTime(320, t + 0.04);
+    g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(0.001, t+0.1);
+    o.connect(g); g.connect(master); o.start(t); o.stop(t+0.12); reg(o,g);
+    var s = ac.createBufferSource(), sg = ac.createGain();
+    var bp = ac.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=3200; bp.Q.value=1.5;
+    s.buffer=noiseBuffer; sg.gain.setValueAtTime(v*0.45,t); sg.gain.exponentialRampToValueAtTime(0.001,t+0.048);
+    s.connect(bp); bp.connect(sg); sg.connect(master); s.start(t); s.stop(t+0.055); reg(s,sg);
+  }
+
+  function tDhin(t) { tDha(t, 0.38); tTin(t, 0.22); }
+
+  // ── Sitar-like pluck ──
+  function sitar(freq, t, dur, vol) {
+    vol = vol || 0.28;
+    var o = ac.createOscillator(), g = ac.createGain();
+    var bp = ac.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=freq*1.6; bp.Q.value=2.5;
+    o.type='sawtooth'; o.frequency.value=freq; o.detune.value=(Math.random()-0.5)*9;
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t+dur);
+    o.connect(bp); bp.connect(g); g.connect(master); o.start(t); o.stop(t+dur+0.06); reg(o,g);
+    // Sympathetic string (overtone, very quiet)
+    var o2=ac.createOscillator(), g2=ac.createGain();
+    o2.type='sine'; o2.frequency.value=freq*2; o2.detune.value=12;
+    g2.gain.setValueAtTime(vol*0.1,t); g2.gain.exponentialRampToValueAtTime(0.001,t+dur*0.55);
+    o2.connect(g2); g2.connect(master); o2.start(t); o2.stop(t+dur*0.6); reg(o2,g2);
+  }
+
+  // ── TRACK 1: English Pop (C major, 100 bpm, pop drum kit) ──
+  function startEnglish() {
+    var beat = 60/100;  // 0.6 s
+    var s8   = beat/2;  // 0.3 s 8th note
+    // C major pentatonic melody pattern (two octaves for interest)
+    var mel  = [261.63,329.63,392,440,523.25,440,392,329.63,261.63,293.66,329.63,392,440,392,329.63,261.63];
+    // I-V-vi-IV bass (C-G-Am-F)
+    var bass = [130.81,196,110,87.31];
+    var mi=0, bi=0;
+
+    function seq() {
+      if (!playing) return;
+      var t = ac.currentTime + 0.05;
+      // Schedule one full bar (4 beats)
+      for (var b=0; b<4; b++) {
+        var bt = t + b*beat;
+        // Kick 1 & 3
+        if (b===0||b===2) kick(bt, 0.62);
+        // Snare 2 & 4
+        if (b===1||b===3) snare(bt, 0.40);
+        // Hi-hat every 8th, open on offbeat
+        hihat(bt, 0.20, false);
+        hihat(bt+s8, 0.14, b===1||b===3);
+        // Bass note (sine) held 2 beats
+        if (b%2===0) tone(bass[(bi+Math.floor(b/2))%bass.length],'sine',bt,beat*1.85,0.30);
+        // Melody: 2 notes per beat
+        var f1=mel[mi%mel.length], f2=mel[(mi+1)%mel.length];
+        tone(f1,'triangle',bt,       s8*0.82,0.17,(Math.random()-0.5)*4);
+        tone(f2,'triangle',bt+s8,    s8*0.82,0.14,(Math.random()-0.5)*4);
+        // Octave shimmer
+        tone(f1*2,'sine',bt,s8*0.55,0.055);
+        mi+=2;
+      }
+      bi++;
+      seqTimer = setTimeout(seq, beat*4*1000 - 30);
+    }
+    seq();
+  }
+
+  // ── TRACK 2: Hindi Bollywood (D Kafi thaat, Kaherwa taal 8-beat, 88 bpm) ──
+  function startHindi() {
+    var beat = 60/88;
+    var s8   = beat/2;   // 8th note
+    // D Kafi: D E F G A Bb C D (notes in Hz at octave 4)
+    var sc = [293.66,329.63,349.23,392,440,466.16,523.25,587.33];
+    // Melody pattern (index into sc)
+    var pat = [0,2,4,3,2,1,0,3,4,6,5,4,2,1,0,2];
+    var mi = 0;
+
+    function seq() {
+      if (!playing) return;
+      var t = ac.currentTime + 0.05;
+      // Kaherwa 8-beat taal: Dha Dhin Dha Dha | Dhin Dha Tin Tin
+      var taala = ['dha','dhin','dha','dha','dhin','dha','tin','tin'];
+      taala.forEach(function(b, i) {
+        var bt = t + i*s8;
+        if (b==='dha')  tDha(bt, 0.52);
+        if (b==='dhin') tDhin(bt);
+        if (b==='tin')  tTin(bt, 0.33);
+      });
+
+      // Sitar melody: 4 phrases over the 8 beats
+      for (var p=0; p<4; p++) {
+        var pt = t + p*s8*2;
+        var f1 = sc[pat[mi%pat.length]];
+        var f2 = sc[pat[(mi+1)%pat.length]];
+        sitar(f1, pt,          s8*1.5, 0.26);
+        sitar(f2, pt+s8*0.62, s8*1.1, 0.20);
+        // Meend (glide ornament) on some phrases
+        if (p===1||p===3) {
+          var og=ac.createOscillator(), gg=ac.createGain();
+          og.type='sawtooth'; og.frequency.value=f1;
+          og.frequency.linearRampToValueAtTime(f2, pt+s8*0.28);
+          gg.gain.setValueAtTime(0.14,pt); gg.gain.exponentialRampToValueAtTime(0.001,pt+s8*0.32);
+          og.connect(gg); gg.connect(master); og.start(pt); og.stop(pt+s8*0.36); reg(og,gg);
+        }
+        mi++;
+      }
+
+      // Tanpura drone (D2 + A2 + D3)
+      tone(73.42,'sine',t, s8*8*0.96, 0.11);
+      tone(110,  'sine',t, s8*8*0.96, 0.07);
+      tone(146.83,'sine',t,s8*8*0.96, 0.05);
+
+      seqTimer = setTimeout(seq, s8*8*1000 - 30);
+    }
+    seq();
+  }
+
+  // ── TRACK 3: Ambient Chill ──
+  function startAmbient() {
+    var freqs=[110,138.59,164.81,220,329.63];
+    var vols =[0.28,0.19,0.17,0.16,0.12];
+    freqs.forEach(function(f,i){
+      var o=ac.createOscillator(), g=ac.createGain();
+      var lfo=ac.createOscillator(), lg=ac.createGain();
+      o.type='sine'; o.frequency.value=f; o.detune.value=(Math.random()-0.5)*14;
+      lfo.type='sine'; lfo.frequency.value=0.07+i*0.03; lg.gain.value=0.018;
+      lfo.connect(lg); lg.connect(g.gain);
+      g.gain.setValueAtTime(0,ac.currentTime);
+      g.gain.linearRampToValueAtTime(vols[i], ac.currentTime+1.5+i*0.4);
+      o.connect(g); g.connect(master); o.start(ac.currentTime); lfo.start(ac.currentTime);
+      reg(o,g); reg(lfo,lg);
+    });
+    [440,550,660,880].forEach(function(f,i){
+      var o=ac.createOscillator(), g=ac.createGain();
+      o.type='sine'; o.frequency.value=f; o.detune.value=(Math.random()-0.5)*10;
+      g.gain.setValueAtTime(0,ac.currentTime);
+      g.gain.linearRampToValueAtTime(0.02,ac.currentTime+2.2+i*0.5);
+      o.connect(g); g.connect(master); o.start(ac.currentTime); reg(o,g);
+    });
+  }
+
+  // ── Playback ──
+  function doPlay()  { if (!busy) { busy=true; readyThenPlay(TRACKS[curIdx].fn); } }
+  function doPause() { stopAll(); playing=false; updateUI(); }
+  function togglePlay() { playing ? doPause() : doPlay(); }
+
+  function nextTrack() {
+    var was=playing; stopAll(); playing=false;
+    curIdx=(curIdx+1)%TRACKS.length;
+    flashName(); updateUI();
+    if (was) { busy=true; readyThenPlay(TRACKS[curIdx].fn); }
+  }
+
+  function flashName() {
+    trackEl.classList.remove('flash'); void trackEl.offsetWidth; trackEl.classList.add('flash');
+  }
+
+  function updateUI() {
+    trackEl.textContent = TRACKS[curIdx].name;
+    if (playing) {
+      widget.classList.add('playing');
+      hintEl.textContent = 'Playing  •  click → next  •  dbl-click → pause';
+    } else {
+      widget.classList.remove('playing');
+      hintEl.textContent = 'click → next song';
+    }
+  }
+
+  // ── Interaction ──
+  var clickTimer=null, lastTap=0, DBLMS=300, touchHandled=false;
+
+  widget.addEventListener('touchstart', function(){ ensureGraph(); }, {passive:true});
+
+  widget.addEventListener('touchend', function(e){
+    e.preventDefault(); touchHandled=true;
+    var now=Date.now(), delta=now-lastTap; lastTap=now;
+    if (delta>30 && delta<DBLMS) { clearTimeout(clickTimer); togglePlay(); }
+    else { clearTimeout(clickTimer); clickTimer=setTimeout(nextTrack, DBLMS); }
+  }, {passive:false});
+
+  widget.addEventListener('click', function(){
+    if (touchHandled) { touchHandled=false; return; }
+    clearTimeout(clickTimer); clickTimer=setTimeout(nextTrack, DBLMS);
+  });
+  widget.addEventListener('dblclick', function(){
+    if (touchHandled) { touchHandled=false; return; }
+    clearTimeout(clickTimer); togglePlay();
+  });
+  widget.addEventListener('keydown', function(e){
+    if (e.key==='Enter'||e.key===' '){ e.preventDefault(); togglePlay(); }
+    if (e.key==='ArrowRight') nextTrack();
+  });
+
+  setTimeout(function(){ badge.classList.add('visible'); }, 1400);
+  setTimeout(function(){ badge.classList.remove('visible'); }, 7000);
+
+  updateUI();
+})();
+</script>
+
 </body>
 </html>
